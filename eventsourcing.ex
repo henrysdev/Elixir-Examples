@@ -1,8 +1,15 @@
-defmodule Main do
-  def main do
-    eh_pid = spawn(EventHandler, :listen, [%{}])
-    spawn(Plane, :init, ["ABC123", "New York", eh_pid])
-  end
+#--------------------------------------------------------------------------------
+# The kind of event that will define state changes to our Plane
+#--------------------------------------------------------------------------------
+defmodule Flight do
+  defstruct origin: nil, dest: nil, dist: 0
+end
+
+#--------------------------------------------------------------------------------
+# The structure of a state change that is persisted (and replayable)
+#--------------------------------------------------------------------------------
+defmodule EventRecord do
+  defstruct apply: nil, state: nil
 end
 
 #--------------------------------------------------------------------------------
@@ -41,13 +48,6 @@ defmodule Plane do
 end
 
 #--------------------------------------------------------------------------------
-# The kind of event that will define state changes to our Plane
-#--------------------------------------------------------------------------------
-defmodule Flight do
-  defstruct origin: nil, dest: nil, dist: 0
-end
-
-#--------------------------------------------------------------------------------
 # Handles everything in the event-sourcing abstraction layer
 #--------------------------------------------------------------------------------
 defmodule EventHandler do
@@ -74,14 +74,6 @@ defmodule EventHandler do
   end
 end
 
-#--------------------------------------------------------------------------------
-# The structure of a state change that is persisted (and replayable)
-#--------------------------------------------------------------------------------
-defmodule EventRecord do
-  defstruct apply: nil, state: nil
-end
-
-
 defmodule Const do
   def geo_locations do
     %{
@@ -98,5 +90,12 @@ end
 defmodule Utils do
   def calc_miles({x1, y1}, {x2, y2}) do
     :math.sqrt(:math.pow(x2 - x1, 2) + :math.pow((y2 - y1), 2)) * 55
+  end
+end
+
+defmodule Main do
+  def main do
+    eh_pid = spawn(EventHandler, :listen, [%{}])
+    spawn(Plane, :init, ["ABC123", "New York", eh_pid])
   end
 end
