@@ -1,3 +1,10 @@
+defmodule Main do
+  def main do
+    eh_pid = spawn(EventHandler, :listen, [%{}])
+    spawn(Plane, :init, ["ABC123", "New York", eh_pid])
+  end
+end
+
 #--------------------------------------------------------------------------------
 # The business logic and target state we will keep track of using event sourcing
 #--------------------------------------------------------------------------------
@@ -74,13 +81,6 @@ defmodule EventRecord do
   defstruct apply: nil, state: nil
 end
 
-
-defmodule Main do
-  def main do
-    eh_pid = spawn(EventHandler, :listen, [%{}])
-    spawn(Plane, :init, ["ABC123", "New York", eh_pid])
-  end
-end
 
 defmodule Const do
   def geo_locations do
